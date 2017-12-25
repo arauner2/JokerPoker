@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Hand {
 	
-	private String[][] cards;
+	private String[][] cards = new String[3][2];
 	
 	public Hand(){
 		for(int i = 0; i<3; i++) {
