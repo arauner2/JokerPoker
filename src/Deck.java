@@ -8,7 +8,7 @@ public class Deck {
 	private static Random rand = new Random(); 
 	private static ArrayList<String> deck = new ArrayList<String>();
 	
-	public Deck() {
+	public static void initiateDeck(){
 		cardValues.put("A", 1);
 		cardValues.put("K", 0);
 		cardValues.put("Q", 10);
@@ -30,12 +30,9 @@ public class Deck {
 		}
 		deck.remove("Joker");
 		deck.remove("Joker");
-		for(String card: deck) {
-			System.out.println(card);
-		}
 	}
 	
-	public String getRandomCard() {
+	public static String getRandomCard() {
 		int randInt = rand.nextInt(deck.size());
 		String toReturn = deck.get(randInt);
 		deck.remove(randInt);
