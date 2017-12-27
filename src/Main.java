@@ -7,18 +7,16 @@ import java.util.Map;
 
 /* Issues:
  * How many people can play well with one deck?
- * 
  */
 
 public class Main {
 	
 	public static ArrayList<String> discard = new ArrayList<String>();
-	public static Scanner scan;
 	public static ArrayList<Hand> player = new ArrayList<Hand>();
 	public static Map<Hand, Integer> points = new HashMap<Hand, Integer>();
+	public static Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		scan = new Scanner(System.in);
 		Deck.initiateDeck();
 		boolean gameOver = false;
 		boolean roundOver = false;
@@ -42,30 +40,18 @@ public class Main {
 		
 		//START THE GAME
 		while(!gameOver) {
+			roundOver = false;
+			System.out.println("The hands for each player are as follows:");
+			for(Hand hand: player) {
+				System.out.println(hand.getName().toUpperCase());
+				System.out.println(hand);
+			}
+			System.out.println("---------------------------------------------------------------------------");
 			while(!roundOver) {
 				boolean lastTurn = false;
 				int playerThatIsDone = -1;
 				for(Hand hand:player) {
-					System.out.println(hand.getName());
-					System.out.println(hand);
-					System.out.println("Choose an option and type in the corresponding number:");
-					System.out.println("1. Flip over a card");
-					System.out.println("2. Draw a card from the deck");
-					System.out.println("3. Choose the " + discard.get(discard.size()-1) + " from the discard pile");
-					int choice = scan.nextInt();
-					if(choice == 1) {
-						flipOver(hand);
-					}else if(choice == 2) {
-						drawFromDeck(hand);
-					}else if(choice == 3) {
-						chooseFromDiscard(hand);
-					}else {
-						while(choice < 1 || choice > 3) {
-							System.out.println("Invalid option. Input 1, 2, or 3.");
-							choice = scan.nextInt();
-						}
-					}
-					System.out.println(hand);
+					roundLogic(hand, lastTurn);
 					if(!roundOver) {
 						roundOver = hand.isRoundOver();
 						if(roundOver) {
@@ -77,45 +63,20 @@ public class Main {
 				if(lastTurn) {
 					if(playerThatIsDone != 0) {
 						for(int i = 0; i < playerThatIsDone; i++) {
-							System.out.println(player.get(i).getName());
-							System.out.println(player.get(i));
-							System.out.println("Choose an option and type in the corresponding number:");
-							System.out.println("1. Flip over a card");
-							System.out.println("2. Draw a card from the deck");
-							System.out.println("3. Choose the " + discard.get(discard.size()-1) + " from the discard pile");
-							int choice = scan.nextInt();
-							if(choice == 1) {
-								flipOver(player.get(i));
-							}else if(choice == 2) {
-								drawFromDeck(player.get(i));
-							}else if(choice == 3) {
-								chooseFromDiscard(player.get(i));
-							}else {
-								while(choice < 1 || choice > 3) {
-									System.out.println("Invalid option. Input 1, 2, or 3.");
-									choice = scan.nextInt();
-								}
-								if(choice == 1) {
-									flipOver(player.get(i));
-								}else if(choice == 2) {
-									drawFromDeck(player.get(i));
-								}else if(choice == 3) {
-									chooseFromDiscard(player.get(i));
-								}
-							}
-							System.out.println(player.get(i));
+							roundLogic(player.get(i), lastTurn);
 						}
 					}
 				}
 			}
+			updateScores();
 			for(Hand key:points.keySet()) {
-				if(points.get(key) > Integer.valueOf(100)) {
+				if(points.get(key).compareTo(Integer.valueOf(100)) > 0) {
 					gameOver = true;
+					break;
 				}
 			}
 			if(!gameOver) {
 				//print scores
-				updateScores();
 				System.out.println("Round over!");
 				System.out.println("Player          Points");
 				for(Hand hand : player) {
@@ -123,12 +84,13 @@ public class Main {
 				}
 				//start new round
 				Deck.initiateDeck();
-				player = new ArrayList<Hand>();
 				for(int i = 0; i < numPlayers; i++) {
-					player.add(new Hand(i+1));
-				} 
+					player.get(i).getNewCards();
+				}
+				discard = new ArrayList<String>();
+				discard.add(Deck.getRandomCard());
 			}else {
-				//TODO decide who wins
+				//decide who wins
 				Comparator<Hand> cmpHandByPoints = new Comparator<Hand>() {
 					public int compare(Hand a, Hand b) {
 						if(points.get(a) < points.get(b)){
@@ -144,7 +106,7 @@ public class Main {
 				if(points.get(player.get(0)) == points.get(player.get(1))) {
 					System.out.println("It's a tie!");
 				}else {
-					System.out.println(player.get(0).getName() + "wins!");
+					System.out.println(player.get(0).getName() + " wins!");
 				}
 				System.out.println("Player          Points");
 				for(Hand hand : player) {
@@ -152,7 +114,6 @@ public class Main {
 				}
 			}
 		}
-		
 	}
 	
 	public static void flipOver(Hand hand) {
@@ -193,7 +154,7 @@ public class Main {
 	
 	public static void drawFromDeck(Hand hand) {
 		String card = Deck.getRandomCard(discard);
-		System.out.println("You drew a " + card + ". Would you like to:");
+		System.out.println("You drew " + (card.equals("A")?"an":"a") + card + ". Would you like to:");
 		System.out.println("1. Replace a card");
 		System.out.println("2. Discard the card");
 		int choice = scan.nextInt();
@@ -216,6 +177,7 @@ public class Main {
 		System.out.println("2. Nevermind, I don't want the card, discard it (This will end your turn)");
 		int choice = scan.nextInt();
 		if(choice == 1) {
+			discard.remove(discard.size()-1);
 			replaceCard(hand, value);
 		}else if(choice != 2) {
 			while(choice != 1 && choice != 2) {
@@ -269,7 +231,44 @@ public class Main {
 	
 	public static void updateScores() {
 		for(Hand hand: player) {
-			points.put(hand, points.get(hand) + hand.getScore());
+			points.put(hand, Integer.valueOf(points.get(hand) + hand.getScore()));
 		}
+	}
+	
+	public static void roundLogic(Hand hand, boolean lastTurn) {
+		System.out.println(hand.getName().toUpperCase());
+		System.out.println(hand);
+		System.out.println("Choose an option and type in the corresponding number:");
+		System.out.println("1. Flip over a card");
+		System.out.println("2. Draw a card from the deck");
+		System.out.println("3. Choose the " + discard.get(discard.size()-1) + " from the discard pile");
+		scan.nextLine();
+		int choice = scan.nextInt();
+		if(choice == 1) {
+			flipOver(hand);
+		}else if(choice == 2) {
+			drawFromDeck(hand);
+		}else if(choice == 3) {
+			chooseFromDiscard(hand);
+		}else {
+			while(choice < 1 || choice > 3) {
+				System.out.println("Invalid option. Input 1, 2, or 3.");
+				choice = scan.nextInt();
+			}
+			if(choice == 1) {
+				flipOver(hand);
+			}else if(choice == 2) {
+				drawFromDeck(hand);
+			}else if(choice == 3) {
+				chooseFromDiscard(hand);
+			}
+		}
+		if(lastTurn) {
+			for(int i = 1; i < 7; i++) {
+				hand.reveal(i);
+			}
+		}
+		System.out.println(hand);
+		System.out.println("---------------------------------------------------------------------------");
 	}
 }

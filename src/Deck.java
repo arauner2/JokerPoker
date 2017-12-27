@@ -9,7 +9,7 @@ public class Deck {
 	private static ArrayList<String> deck = new ArrayList<String>();
 	
 	public static void initiateDeck(){
-		deck.clear();
+		deck = new ArrayList<String>();
 		getCardValues().put("A", 1);
 		getCardValues().put("K", 0);
 		getCardValues().put("Q", 10);

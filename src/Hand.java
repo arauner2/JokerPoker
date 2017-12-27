@@ -1,8 +1,3 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 public class Hand {
 	
 	private String[][] cards = new String[3][2];
@@ -52,8 +47,18 @@ public class Hand {
 	public int getScore() {
 		int score = 0;
 		for(int i = 0; i<3; i++) {
+			String firstCard = "";
 			for(int j = 0; j< 2; j++) {
-				score += Deck.getCardValues().get(this.cards[i][j]);
+				if(j == 0) {
+					firstCard = this.cards[i][j];
+				}else if(j == 1) {
+					if(!firstCard.equals(this.cards[i][j])) {
+						score += Deck.getCardValues().get(this.cards[i][j]);
+						score += Deck.getCardValues().get(firstCard);
+					}else if(firstCard == "Joker") {
+						score -= 10;
+					}
+				}
 			}
 		}
 		return score;
@@ -79,6 +84,7 @@ public class Hand {
 			Main.discard.add(cards[0][1]);
 			cards[0][1] = value;
 		}
+		reveal(index);
 	}
 	
 	public String getCard(int index) {
@@ -120,4 +126,14 @@ public class Hand {
 		return name;
 	}
 	
+	public void getNewCards() {
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j< 2; j++) {
+				this.cards[i][j] = Deck.getRandomCard();
+				this.revealed[i][j] = false;
+			}
+		}
+		this.revealed[2][0] = true;
+		this.revealed[2][1] = true;
+	}
 }
