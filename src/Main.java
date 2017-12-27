@@ -134,27 +134,27 @@ public class Main {
 				cardsToFlip.add(6);
 			}
 		}
-		for(int i = 0; i < cardsToFlip.size(); i++) {
-			System.out.println("Card at spot " + cardsToFlip.get(i));
-		}
-		int choice = scan.nextInt();
-		if(cardsToFlip.size() == 2) {
-			while(choice != cardsToFlip.get(0) && choice != cardsToFlip.get(1)) {
+		if(cardsToFlip.size() == 1) {
+			hand.reveal(cardsToFlip.get(0));
+		}else {
+			System.out.println("1. Card on the left");
+			System.out.println("2. Card on the right");
+			int choice = scan.nextInt();
+			while(choice < 1 || choice > 2) {
 				System.out.println("Not a valid choice. Please choose again.");
 				choice = scan.nextInt();
 			}
-		}else if(cardsToFlip.size() == 1) {
-			while(choice != cardsToFlip.get(0)) {
-				System.out.println("Not a valid choice. Please choose again.");
-				choice = scan.nextInt();
+			if(choice == 1) {
+				hand.reveal(cardsToFlip.get(0));
+			}else if(choice == 2) {
+				hand.reveal(cardsToFlip.get(1));
 			}
 		}
-		hand.reveal(choice);
 	}
 	
 	public static void drawFromDeck(Hand hand) {
 		String card = Deck.getRandomCard(discard);
-		System.out.println("You drew " + (card.equals("A")?"an":"a") + card + ". Would you like to:");
+		System.out.println("You drew " + ((card.equals("A")||card.equals("8"))?"an ":"a ") + card + ". Would you like to:");
 		System.out.println("1. Replace a card");
 		System.out.println("2. Discard the card");
 		int choice = scan.nextInt();
@@ -167,24 +167,19 @@ public class Main {
 				System.out.println("Invalid choice. Choose again.");
 				choice = scan.nextInt();
 			}
+			if(choice == 1) {
+				replaceCard(hand, card);
+			}else if(choice == 2) {
+				discard.add(card);
+			}
 		}
 	}
 	
 	public static void chooseFromDiscard(Hand hand) {
 		String value = discard.get(discard.size()-1);
-		System.out.println("Choose the index of the card to replace:");
-		System.out.println("1. Replace a card");
-		System.out.println("2. Nevermind, I don't want the card, discard it (This will end your turn)");
-		int choice = scan.nextInt();
-		if(choice == 1) {
-			discard.remove(discard.size()-1);
-			replaceCard(hand, value);
-		}else if(choice != 2) {
-			while(choice != 1 && choice != 2) {
-				System.out.println("Invalid choice. Choose again.");
-				choice = scan.nextInt();
-			}
-		}
+		discard.remove(discard.size()-1);
+		System.out.println("Which card would you like to replace?");
+		replaceCard(hand, value);
 	}
 	
 	public static void replaceCard(Hand hand, String value) {
@@ -195,14 +190,14 @@ public class Main {
 			canReplace.add(2);
 			canReplace.add(3);
 			canReplace.add(4);
-		}else if((revealed[1][0] || revealed[1][1]) && (!revealed[0][0] && !revealed[0][1])) {
-			canReplace.add(3);
-			canReplace.add(4);
 		}else if((revealed[1][0]  && revealed[1][1]) && (!revealed[0][0] && !revealed[0][1])) {
 			canReplace.add(3);
 			canReplace.add(4);
 			canReplace.add(5);
 			canReplace.add(6);
+		}else if((revealed[1][0] || revealed[1][1]) && (!revealed[0][0] && !revealed[0][1])) {
+			canReplace.add(3);
+			canReplace.add(4);
 		}else if(revealed[1][0] && revealed[1][1]) {
 			canReplace.add(5);
 			canReplace.add(6);
