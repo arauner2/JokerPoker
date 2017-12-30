@@ -25,10 +25,10 @@ public class Hand {
 	}
 	
 	public String toString() {
-		String toPrint = String.format("Indexes: %d    %d   Hand: %s    %s\n         %d    %d         %s    %s\n         %d    %d         %s    %s\n", 
-				5, 6, (revealed[0][0] == false) ? "X" : cards[0][0], (revealed[0][1] == false) ? "X" : cards[0][1], 
-				3, 4, (revealed[1][0] == false) ? "X" : cards[1][0], (revealed[1][1] == false) ? "X" : cards[1][1], 
-				1, 2, (revealed[2][0] == false) ? "X" : cards[2][0], (revealed[2][1] == false) ? "X" : cards[2][1]);
+		String toPrint = String.format("%s    %s\n%s    %s\n%s    %s\n", 
+				(revealed[0][0] == false) ? "X" : cards[0][0], (revealed[0][1] == false) ? "X" : cards[0][1], 
+				(revealed[1][0] == false) ? "X" : cards[1][0], (revealed[1][1] == false) ? "X" : cards[1][1], 
+				(revealed[2][0] == false) ? "X" : cards[2][0], (revealed[2][1] == false) ? "X" : cards[2][1]);
 		return toPrint;
 	}
 	
@@ -119,6 +119,24 @@ public class Hand {
 			revealed[0][0] = true;
 		}else if(index == 6) {
 			revealed[0][1] = true;
+		}
+	}
+	
+	public boolean isRevealed(int index) {
+		if(index == 1) {
+			return revealed[2][0];
+		}else if(index == 2) {
+			return revealed[2][1];
+		}else if(index == 4) {
+			return revealed[1][1];
+		}else if(index == 3){
+			return revealed[1][0];
+		}else if(index == 5) {
+			return revealed[0][0];
+		}else if(index == 6) {
+			return revealed[0][1];
+		}else {
+			return false;
 		}
 	}
 

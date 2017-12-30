@@ -203,16 +203,14 @@ public class Main {
 			canReplace.add(6);
 		}
 		for(int i = 0; i < canReplace.size(); i++) {
-			System.out.println("Card at spot " + canReplace.get(i));
+			int index = canReplace.get(i);
+			System.out.println((i + 1) + ". The " + ((hand.isRevealed(index)) ? hand.getCard(index) : "X") + " on the " + ((index % 2 == 0) ? "right" : "left"));
 		}
 		int choice = scan.nextInt();
 		boolean validChoice = false;
 		while(!validChoice) {
-			for(Integer card:canReplace) {
-				if(choice == card) {
-					validChoice = true;
-					break;
-				}
+			if(!(choice < 0 || choice > canReplace.size())) {
+				validChoice = true;
 			}
 			if(validChoice) {
 				break;
@@ -221,7 +219,7 @@ public class Main {
 				choice = scan.nextInt();
 			}
 		}
-		hand.setCard(choice, value);
+		hand.setCard(canReplace.get(choice - 1), value);
 	}
 	
 	public static void updateScores() {
