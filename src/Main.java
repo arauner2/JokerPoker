@@ -82,6 +82,7 @@ public class Main {
 				for(Hand hand : player) {
 					System.out.println(hand.getName() + "        " + points.get(hand));
 				}
+				System.out.println();
 				//start new round
 				Deck.initiateDeck();
 				for(int i = 0; i < numPlayers; i++) {
@@ -117,7 +118,7 @@ public class Main {
 	}
 	
 	public static void flipOver(Hand hand) {
-		System.out.println("Choose the index of the card you want to flip over:");
+		System.out.println("Choose the number corresponding to the card you want to flip over:");
 		ArrayList<Integer> cardsToFlip = new ArrayList<Integer>();
 		boolean[][] revealed = hand.getRevealed();
 		if(!revealed[1][0]) {

@@ -13,7 +13,7 @@ public class Deck {
 		getCardValues().put("A", 1);
 		getCardValues().put("K", 0);
 		getCardValues().put("Q", 10);
-		getCardValues().put("J", 10);
+		getCardValues().put("Jack", 10);
 		getCardValues().put("Joker", -5);
 		getCardValues().put("10", 10);
 		getCardValues().put("9", 9);
