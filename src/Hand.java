@@ -25,8 +25,9 @@ public class Hand {
 	}
 	
 	public String toString() {
-		String toPrint = String.format("%s    %s\n%s    %s\n%s    %s\n", 
+		String toPrint = String.format("%s    %s     Discard Pile: %s\n%s    %s\n%s    %s\n", 
 				(revealed[0][0] == false) ? "X" : cards[0][0], (revealed[0][1] == false) ? "X" : cards[0][1], 
+				Main.discard.get(Main.discard.size()-1),
 				(revealed[1][0] == false) ? "X" : cards[1][0], (revealed[1][1] == false) ? "X" : cards[1][1], 
 				(revealed[2][0] == false) ? "X" : cards[2][0], (revealed[2][1] == false) ? "X" : cards[2][1]);
 		return toPrint;
